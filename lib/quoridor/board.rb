@@ -11,15 +11,12 @@ class Board
   end
 
   def add_pawn(square)
-    validate_square(square)
-    @pawns << square
+    put_pawn(@pawns.length, square)
   end
 
   def move_pawn(index, square)
     validate_pawn(index)
-    validate_square(square)
-    # TODO: check if does not collide with other pawn
-    @pawns[index] = square
+    put_pawn(index, square)
   end
 
   def add_fence(fence)
@@ -57,6 +54,16 @@ class Board
   end
 
   private
+
+  def put_pawn(index, square)
+    validate_square(square)
+
+    if @pawns.index(square)
+      fail ArgumentError, "Square #{square} is already taken by pawn #{@pawns.index(square)}"
+    end
+
+    @pawns[index] = square
+  end
 
   def validate_square(square)
     unless square.length == 2 && COLUMNS.include?(square[0]) && ROWS.include?(square[1])

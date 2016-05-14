@@ -21,6 +21,6 @@ RSpec::Matchers.define :detect_invalid_pawn do |expected|
   end
 
   description do
-    "detect a pawn that was not placed on the board"
+    'detect a pawn that was not placed on the board'
   end
 end

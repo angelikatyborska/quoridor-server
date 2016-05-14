@@ -21,6 +21,6 @@ RSpec::Matchers.define :detect_invalid_square do |expected|
   end
 
   description do
-    "detect square outside of a1-i9 range"
+    'detect square outside of a1-i9 range'
   end
 end

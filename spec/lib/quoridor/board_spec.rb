@@ -13,6 +13,11 @@ RSpec.describe(Board) do
       expect { board.add_pawn('a1') }.to change(board.pawns, :count).by(1)
       expect(board.pawns[0]).to eq('a1')
     end
+
+    it 'does not allow to put a pawn on a pawn' do
+      board.add_pawn('a1')
+      expect { board.add_pawn('a1') }.to raise_error(ArgumentError, 'Square a1 is already taken by pawn 0')
+    end
   end
 
   describe '#move_pawn' do
@@ -25,7 +30,6 @@ RSpec.describe(Board) do
       expect { board.move_pawn(0, '123') }.to detect_invalid_square
     end
 
-
     it 'detects invalid pawns' do
       expect { board.move_pawn(1, 'a1') }.to detect_invalid_pawn
       expect { board.move_pawn(42, 'a1') }.to detect_invalid_pawn
@@ -33,6 +37,11 @@ RSpec.describe(Board) do
 
     it 'moves the pawn' do
       expect { board.move_pawn(0, 'e3') }.to change {board.pawns[0]}.from('a1').to('e3')
+    end
+
+    it 'does not allow to put a pawn on a pawn' do
+      board.add_pawn('e4')
+      expect { board.move_pawn(0, 'e4') }.to raise_error(ArgumentError, 'Square e4 is already taken by pawn 1')
     end
   end
 
