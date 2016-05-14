@@ -3,30 +3,36 @@ require_relative '../../../lib/quoridor/board'
 RSpec.describe(Board) do
   let(:board) { Board.new }
 
-  describe '#add_player' do
+  describe '#add_pawn' do
     it 'detects invalid squares' do
-      expect { board.add_player('j10') }.to detect_invalid_square
-      expect { board.add_player('abc') }.to detect_invalid_square
+      expect { board.add_pawn('j10') }.to detect_invalid_square
+      expect { board.add_pawn('abc') }.to detect_invalid_square
     end
 
-    it 'adds a player' do
-      expect { board.add_player('a1') }.to change(board.players, :count).by(1)
-      expect(board.players[0]).to eq('a1')
+    it 'adds a pawn' do
+      expect { board.add_pawn('a1') }.to change(board.pawns, :count).by(1)
+      expect(board.pawns[0]).to eq('a1')
     end
   end
 
-  describe '#move_player' do
+  describe '#move_pawn' do
     before(:each) do
-      board.add_player('a1')
+      board.add_pawn('a1')
     end
 
     it 'detects invalid squares' do
-      expect { board.move_player(0, 't1') }.to detect_invalid_square
-      expect { board.move_player(0, '123') }.to detect_invalid_square
+      expect { board.move_pawn(0, 't1') }.to detect_invalid_square
+      expect { board.move_pawn(0, '123') }.to detect_invalid_square
     end
 
-    it 'moves the player' do
-      expect { board.move_player(0, 'e3') }.to change {board.players[0]}.from('a1').to('e3')
+
+    it 'detects invalid pawns' do
+      expect { board.move_pawn(1, 'a1') }.to detect_invalid_pawn
+      expect { board.move_pawn(42, 'a1') }.to detect_invalid_pawn
+    end
+
+    it 'moves the pawn' do
+      expect { board.move_pawn(0, 'e3') }.to change {board.pawns[0]}.from('a1').to('e3')
     end
   end
 

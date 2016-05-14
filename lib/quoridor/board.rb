@@ -3,24 +3,23 @@ class Board
   ROWS = %w(1 2 3 4 5 6 7 8 9)
   ORIENTATIONS = %w(h v)
 
-  attr_reader :fences, :players
+  attr_reader :fences, :pawns
 
   def initialize
     @fences = []
-    @players = []
+    @pawns = []
   end
 
-  # TODO: rename 'player' to 'pawn'
-  def add_player(square)
+  def add_pawn(square)
     validate_square(square)
-    @players << square
+    @pawns << square
   end
 
-  def move_player(index, square)
-    validate_player(index)
+  def move_pawn(index, square)
+    validate_pawn(index)
     validate_square(square)
-    # TODO: check if does not collide with other player
-    @players[index] = square
+    # TODO: check if does not collide with other pawn
+    @pawns[index] = square
   end
 
   def add_fence(fence)
@@ -75,9 +74,9 @@ class Board
     end
   end
 
-  def validate_player(index)
-    unless players[index]
-      fail ArgumentError, "Player with index #{index} does not exist"
+  def validate_pawn(index)
+    unless pawns[index]
+      fail ArgumentError, "Pawn with index #{index} does not exist"
     end
   end
 
