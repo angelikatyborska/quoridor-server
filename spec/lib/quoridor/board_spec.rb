@@ -4,16 +4,9 @@ RSpec.describe(Board) do
   let(:board) { Board.new }
 
   describe '#add_player' do
-    it 'validates square' do
-      error_message =  ->(square) { "Invalid square #{square}, must be between a1 and i9" }
-
-      expect { board.add_player('a1') }.not_to raise_error
-      expect { board.add_player('i9') }.not_to raise_error
-
-      expect { board.add_player('a0') }.to raise_error(ArgumentError, error_message.('a0'))
-      expect { board.add_player('i20') }.to raise_error(ArgumentError, error_message.('i20'))
-      expect { board.add_player('j10') }.to raise_error(ArgumentError, error_message.('j10'))
-      expect { board.add_player('abc') }.to raise_error(ArgumentError, error_message.('abc'))
+    it 'detects invalid squares' do
+      expect { board.add_player('j10') }.to detect_invalid_square
+      expect { board.add_player('abc') }.to detect_invalid_square
     end
 
     it 'adds a player' do
@@ -27,16 +20,9 @@ RSpec.describe(Board) do
       board.add_player('a1')
     end
 
-    it 'validates square' do
-      error_message =  ->(square) { "Invalid square #{square}, must be between a1 and i9" }
-
-      expect { board.move_player(0, 'e3') }.not_to raise_error
-      expect { board.move_player(0, 'g1') }.not_to raise_error
-
-      expect { board.move_player(0, 'x1') }.to raise_error(ArgumentError, error_message.('x1'))
-      expect { board.move_player(0, 'a10') }.to raise_error(ArgumentError, error_message.('a10'))
-      expect { board.move_player(0, 't1') }.to raise_error(ArgumentError, error_message.('t1'))
-      expect { board.move_player(0, '123') }.to raise_error(ArgumentError, error_message.('123'))
+    it 'detects invalid squares' do
+      expect { board.move_player(0, 't1') }.to detect_invalid_square
+      expect { board.move_player(0, '123') }.to detect_invalid_square
     end
 
     it 'moves the player' do
@@ -45,16 +31,15 @@ RSpec.describe(Board) do
   end
 
   describe '#fence?' do
-    error_message =  ->(square) { "Invalid square #{square}, must be between a1 and i9" }
-
     context 'without fences' do
       it 'returns false' do
         expect(board.fence?('a1', 'b1')).to be false
         expect(board.fence?('a1', 'f4')).to be false
       end
 
-      it 'validates squares' do
-        expect { board.fence?('x1', 'a1') }.to raise_error(ArgumentError, error_message.('x1'))
+      it 'detects invalid squares' do
+        expect { board.fence?('x1', 'a1') }.to detect_invalid_square
+        expect { board.fence?('3e', 'a1') }.to detect_invalid_square
       end
     end
 
@@ -101,13 +86,9 @@ RSpec.describe(Board) do
   end
 
   describe '#north #east #south #west' do
-    error_message =  ->(square) { "Invalid square #{square}, must be between a1 and i9" }
-
-    it 'validates squares' do
-      expect { board.north('x1') }.to raise_error(ArgumentError, error_message.('x1'))
-      expect { board.east('asdf') }.to raise_error(ArgumentError, error_message.('asdf'))
-      expect { board.south('y4') }.to raise_error(ArgumentError, error_message.('y4'))
-      expect { board.west('a888') }.to raise_error(ArgumentError, error_message.('a888'))
+    it 'detects invalid squares' do
+      expect { board.north('x1') }.to detect_invalid_square
+      expect { board.east('asdf') }.to detect_invalid_square
     end
 
     it 'handles a square in the middle' do
