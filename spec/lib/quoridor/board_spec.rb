@@ -64,17 +64,17 @@ RSpec.describe(Board) do
       end
     end
 
-    context 'in the bottom row' do
+    context 'in the southernmost row' do
         it 'does not allow vertically' do
-          expect { board.add_fence('a9v') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+          expect { board.add_fence('a1v') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
         end
 
         it 'does not allow horizontally' do
-          expect { board.add_fence('a9h') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+          expect { board.add_fence('a1h') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
         end
     end
 
-    context 'in the rightmost column' do
+    context 'in the easternmost column' do
         it 'does not allow vertically' do
           expect { board.add_fence('i5v') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
         end
@@ -86,30 +86,30 @@ RSpec.describe(Board) do
 
     context 'on an existing fence' do
       before(:each) do
-        board.add_fence('c2h')
+        board.add_fence('c3h')
       end
 
       it 'does not allow overlapping' do
-        expect { board.add_fence('b2h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
-        expect { board.add_fence('c2h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
-        expect { board.add_fence('d2h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
-        expect { board.add_fence('c2v') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+        expect { board.add_fence('b3h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+        expect { board.add_fence('c3h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+        expect { board.add_fence('d3h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+        expect { board.add_fence('c3v') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
       end
 
-      it 'allows a fence above' do
-        expect { board.add_fence('c1h') }.not_to raise_error
+      it 'allows a fence to the nort' do
+        expect { board.add_fence('c2h') }.not_to raise_error
       end
 
-      it 'allows a fence below' do
-        expect { board.add_fence('c3h') }.not_to raise_error
+      it 'allows a fence to the south' do
+        expect { board.add_fence('c4h') }.not_to raise_error
       end
 
-      it 'allows a fence to the left' do
-        expect { board.add_fence('b2v') }.not_to raise_error
+      it 'allows a fence to the west' do
+        expect { board.add_fence('b3v') }.not_to raise_error
       end
 
-      it 'allows a fence to the right' do
-        expect { board.add_fence('d2v') }.not_to raise_error
+      it 'allows a fence to the east' do
+        expect { board.add_fence('d3v') }.not_to raise_error
       end
     end
   end

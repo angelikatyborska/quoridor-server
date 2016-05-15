@@ -1,6 +1,6 @@
 class Board
   COLUMNS = %w(a b c d e f g h i)
-  ROWS = %w(1 2 3 4 5 6 7 8 9)
+  ROWS = %w(9 8 7 6 5 4 3 2 1)
   ORIENTATIONS = %w(h v)
 
   attr_reader :fences, :pawns
@@ -33,6 +33,7 @@ class Board
   end
 
   def neighboring_squares(square)
+    validate_square(square)
     directions = %w(north east south west)
     directions.map { |direction| self.send(direction, square) }.compact
   end
@@ -46,34 +47,40 @@ class Board
   end
 
   def north(square)
-    square_relative_to(square, [0, 1])
-  end
-
-  def south(square)
     square_relative_to(square, [0, -1])
   end
 
+  def south(square)
+    square_relative_to(square, [0, 1])
+  end
+
   def first_column?(square)
+    validate_square(square)
     square[0] == COLUMNS.first
   end
 
   def last_column?(square)
+    validate_square(square)
     square[0] == COLUMNS.last
   end
 
   def first_row?(square)
+    validate_square(square)
     square[1] == ROWS.first
   end
 
   def last_row?(square)
+    validate_square(square)
     square[1] == ROWS.last
   end
 
   def horizontal?(fence)
+    validate_fence(fence)
     orientation(fence) == 'h'
   end
 
   def vertical?(fence)
+    validate_fence(fence)
     orientation(fence) == 'v'
   end
 
