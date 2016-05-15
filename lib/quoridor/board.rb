@@ -21,7 +21,7 @@ class Board
 
   def add_fence(fence)
     validate_fence(fence)
-    validate_fence_addition(fence)
+    validate_fence_placement(fence)
     @fences << fence
   end
 
@@ -69,6 +69,14 @@ class Board
     square[1] == ROWS.last
   end
 
+  def horizontal?(fence)
+    orientation(fence) == 'h'
+  end
+
+  def vertical?(fence)
+    orientation(fence) == 'v'
+  end
+
   private
 
   def square(fence)
@@ -105,7 +113,7 @@ class Board
     end
   end
 
-  def validate_fence_addition(fence)
+  def validate_fence_placement(fence)
     if last_row?(square(fence)) || last_column?(square(fence))
       fail ArgumentError, 'Cannot place a fence outside of the board'
     end
@@ -127,9 +135,9 @@ class Board
     square1, square2 = sort_squares(square1, square2)
 
     if square1[0] == square2[0]
-      (square(fence) == square1 || square(fence) == west(square1)) && orientation(fence) == 'h'
+      (square(fence) == square1 || square(fence) == west(square1)) && horizontal?(fence)
     else
-      (square(fence) == square1 || square(fence) == north(square1)) && orientation(fence) == 'v'
+      (square(fence) == square1 || square(fence) == north(square1)) && vertical?(fence)
     end
   end
 
@@ -137,7 +145,7 @@ class Board
     return true if square(fence1) == square(fence2)
 
     if orientation(fence1) == orientation(fence2)
-      if orientation(fence1) == 'h'
+      if horizontal?(fence1)
         return east(square(fence1)) == square(fence2) || west(square(fence1)) == square(fence2)
       else
         return north(square(fence1)) == square(fence2) || south(square(fence1)) == square(fence2)

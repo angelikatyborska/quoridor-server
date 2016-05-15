@@ -47,7 +47,11 @@ RSpec.describe(Board) do
 
   describe '#add_fence' do
     it 'detects invalid squares' do
-      expect { board.add_fence('j10') }.to detect_invalid_square
+      expect { board.add_fence('j1v') }.to detect_invalid_square
+    end
+
+    it 'detects invalid fences' do
+      expect { board.add_fence('a1z') }.to raise_error(ArgumentError, 'Invalid fence a1z')
     end
 
     context 'in the middle of an empty board' do
