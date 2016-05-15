@@ -8,3 +8,7 @@ gem 'faye-websocket', '~> 0.10.3'
 
 gem 'eventmachine', '~> 1.2.0'
 gem 'rspec', '~> 3.4.0'
+
+group :test do
+  gem 'simplecov', require: false
+end
