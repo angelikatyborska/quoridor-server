@@ -21,7 +21,7 @@ class Board
 
   def add_fence(fence)
     validate_fence(fence)
-    # TODO: check if physically possible
+    validate_fence_addition(fence)
     @fences << fence
   end
 
@@ -53,7 +53,31 @@ class Board
     square_relative_to(square, [0, -1])
   end
 
+  def first_column?(square)
+    square[0] == COLUMNS.first
+  end
+
+  def last_column?(square)
+    square[0] == COLUMNS.last
+  end
+
+  def first_row?(square)
+    square[1] == ROWS.first
+  end
+
+  def last_row?(square)
+    square[1] == ROWS.last
+  end
+
   private
+
+  def square(fence)
+    fence[0..1]
+  end
+
+  def orientation(fence)
+    fence[2]
+  end
 
   def put_pawn(index, square)
     validate_square(square)
@@ -74,10 +98,20 @@ class Board
   end
 
   def validate_fence(fence)
-    validate_square(fence[0..1])
+    validate_square(square(fence))
 
-    unless ORIENTATIONS.include?(fence[2]) && fence.length == 3
+    unless ORIENTATIONS.include?(orientation(fence)) && fence.length == 3
       fail ArgumentError, "Invalid fence #{fence}"
+    end
+  end
+
+  def validate_fence_addition(fence)
+    if last_row?(square(fence)) || last_column?(square(fence))
+      fail ArgumentError, 'Cannot place a fence outside of the board'
+    end
+
+    if @fences.any? { |other_fence| fences_overlapping?(fence, other_fence) }
+      fail ArgumentError, 'Cannot place a fence on another fence'
     end
   end
 
@@ -93,10 +127,24 @@ class Board
     square1, square2 = sort_squares(square1, square2)
 
     if square1[0] == square2[0]
-      (fence[0..1] == square1 || fence[0..1] == west(square1)) && fence[2] == 'h'
+      (square(fence) == square1 || square(fence) == west(square1)) && orientation(fence) == 'h'
     else
-      (fence[0..1] == square1 || fence[0..1] == north(square1)) && fence[2] == 'v'
+      (square(fence) == square1 || square(fence) == north(square1)) && orientation(fence) == 'v'
     end
+  end
+
+  def fences_overlapping?(fence1, fence2)
+    return true if square(fence1) == square(fence2)
+
+    if orientation(fence1) == orientation(fence2)
+      if orientation(fence1) == 'h'
+        return east(square(fence1)) == square(fence2) || west(square(fence1)) == square(fence2)
+      else
+        return north(square(fence1)) == square(fence2) || south(square(fence1)) == square(fence2)
+      end
+    end
+
+    false
   end
 
   def sort_squares(square1, square2)

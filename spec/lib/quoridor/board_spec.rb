@@ -45,6 +45,71 @@ RSpec.describe(Board) do
     end
   end
 
+  describe '#add_fence' do
+    it 'detects invalid squares' do
+      expect { board.add_fence('j10') }.to detect_invalid_square
+    end
+
+    context 'in the middle of an empty board' do
+      it 'allows vertically' do
+        expect { board.add_fence('e3v') }.not_to raise_error
+      end
+
+      it 'allows horizontally' do
+        expect { board.add_fence('e3h') }.not_to raise_error
+      end
+    end
+
+    context 'in the bottom row' do
+        it 'does not allow vertically' do
+          expect { board.add_fence('a9v') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+        end
+
+        it 'does not allow horizontally' do
+          expect { board.add_fence('a9h') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+        end
+    end
+
+    context 'in the rightmost column' do
+        it 'does not allow vertically' do
+          expect { board.add_fence('i5v') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+        end
+
+        it 'does not allow horizontally' do
+          expect { board.add_fence('i5h') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+        end
+    end
+
+    context 'on an existing fence' do
+      before(:each) do
+        board.add_fence('c2h')
+      end
+
+      it 'does not allow overlapping' do
+        expect { board.add_fence('b2h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+        expect { board.add_fence('c2h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+        expect { board.add_fence('d2h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+        expect { board.add_fence('c2v') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+      end
+
+      it 'allows a fence above' do
+        expect { board.add_fence('c1h') }.not_to raise_error
+      end
+
+      it 'allows a fence below' do
+        expect { board.add_fence('c3h') }.not_to raise_error
+      end
+
+      it 'allows a fence to the left' do
+        expect { board.add_fence('b2v') }.not_to raise_error
+      end
+
+      it 'allows a fence to the right' do
+        expect { board.add_fence('d2v') }.not_to raise_error
+      end
+    end
+  end
+
   describe '#fence?' do
     context 'without fences' do
       it 'returns false' do
