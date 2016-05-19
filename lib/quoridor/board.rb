@@ -55,22 +55,22 @@ module Quoridor
       square_relative_to(square, [0, 1])
     end
 
-    def first_column?(square)
+    def westmost_column?(square)
       validate_square(square)
       square[0] == COLUMNS.first
     end
 
-    def last_column?(square)
+    def eastmost_column?(square)
       validate_square(square)
       square[0] == COLUMNS.last
     end
 
-    def first_row?(square)
+    def northmost_row?(square)
       validate_square(square)
       square[1] == ROWS.first
     end
 
-    def last_row?(square)
+    def southmost_row?(square)
       validate_square(square)
       square[1] == ROWS.last
     end
@@ -122,7 +122,7 @@ module Quoridor
     end
 
     def validate_fence_placement(fence)
-      if last_row?(square(fence)) || last_column?(square(fence))
+      if southmost_row?(square(fence)) || eastmost_column?(square(fence))
         fail ArgumentError, 'Cannot place a fence outside of the board'
       end
 
