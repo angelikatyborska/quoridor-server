@@ -37,7 +37,7 @@ RSpec.describe(PathFinder) do
   end
 
   context 'starting at the target' do
-    let(:start) { 'a1z' }
+    let(:start) { 'a1' }
 
     it 'finds the shortest path' do
       expect(shortest_path).to eq([])
