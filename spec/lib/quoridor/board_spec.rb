@@ -1,7 +1,7 @@
 require_relative '../../../lib/quoridor/board'
 
-RSpec.describe(Board) do
-  let(:board) { Board.new }
+RSpec.describe(Quoridor::Board) do
+  let(:board) { described_class.new }
 
   describe '#add_pawn' do
     it 'detects invalid squares' do

@@ -1,7 +1,7 @@
 require 'faye/websocket'
-require_relative 'lib/quoridor'
+require_relative 'lib/quoridor/lobby'
 
-quoridor = Quoridor.new
+quoridor = Quoridor::Lobby.new
 
 App = lambda do |env|
   if Faye::WebSocket.websocket?(env)

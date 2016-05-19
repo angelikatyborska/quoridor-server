@@ -1,10 +1,12 @@
-class Player
-  attr_reader :id
-  attr_accessor :nickname
+module Quoridor
+  class Player
+    attr_reader :id
+    attr_accessor :nickname
 
-  def initialize(websocket)
-    @id = SecureRandom.base64
-    @nickname = 'guest'
-    @websocket = websocket
+    def initialize(websocket)
+      @id = SecureRandom.base64
+      @nickname = 'guest'
+      @websocket = websocket
+    end
   end
 end
