@@ -21,5 +21,21 @@ RSpec.describe(Quoridor::Rules::Winning) do
         expect(rules.has_won?(board, 3)).to be true
       end
     end
+
+    context 'pawns not on their goal rows/columns' do
+      before(:each) do
+        board.add_pawn('b2')
+        board.add_pawn('e8')
+        board.add_pawn('d3')
+        board.add_pawn('b9')
+      end
+
+      it 'returns true' do
+        expect(rules.has_won?(board, 0)).to be false
+        expect(rules.has_won?(board, 1)).to be false
+        expect(rules.has_won?(board, 2)).to be false
+        expect(rules.has_won?(board, 3)).to be false
+      end
+    end
   end
 end
