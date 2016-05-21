@@ -1,11 +1,11 @@
-require_relative '../../../lib/quoridor/board'
-require_relative '../../../lib/quoridor/rules'
+require_relative '../../../../lib/quoridor/board'
+require_relative '../../../../lib/quoridor/rules/movement'
 
-RSpec.describe Quoridor::Rules do
+RSpec.describe Quoridor::Rules::Movement do
   let(:board) { Quoridor::Board.new }
-  let(:rules) { described_class.new }
+  let(:rules) { described_class }
 
-  describe '#possible_moves' do
+  describe '#possible_movements' do
     context 'no fences, one pawn' do
       context 'from the northmost row' do
         before(:each) do
@@ -13,7 +13,7 @@ RSpec.describe Quoridor::Rules do
         end
 
         it 'allows movement: east, south, west' do
-          expect(rules.possible_moves(board, 0)).to contain_exactly(*%w(f9 e8 d9))
+          expect(rules.possible_movements(board, 0)).to contain_exactly(*%w(f9 e8 d9))
         end
       end
 
@@ -23,7 +23,7 @@ RSpec.describe Quoridor::Rules do
         end
 
         it 'allows movement: north, south, west' do
-          expect(rules.possible_moves(board, 0)).to contain_exactly(*%w(i6 h5 i4))
+          expect(rules.possible_movements(board, 0)).to contain_exactly(*%w(i6 h5 i4))
         end
       end
 
@@ -33,7 +33,7 @@ RSpec.describe Quoridor::Rules do
         end
 
         it 'allows movement: north, east, south, west' do
-          expect(rules.possible_moves(board, 0)).to contain_exactly(*%w(e6 f5 e4 d5))
+          expect(rules.possible_movements(board, 0)).to contain_exactly(*%w(e6 f5 e4 d5))
         end
       end
     end
@@ -46,7 +46,7 @@ RSpec.describe Quoridor::Rules do
       end
 
       it 'allows movement: north, east' do
-        expect(rules.possible_moves(board, 0)).to contain_exactly(*%w(e6 f5))
+        expect(rules.possible_movements(board, 0)).to contain_exactly(*%w(e6 f5))
       end
     end
 
@@ -58,8 +58,8 @@ RSpec.describe Quoridor::Rules do
         end
 
         it 'allows to jump over the other pawn' do
-          expect(rules.possible_moves(board, 0)).to contain_exactly(*%w(f5 e4 d5 e7))
-          expect(rules.possible_moves(board, 1)).to contain_exactly(*%w(f6 e4 d6 e7))
+          expect(rules.possible_movements(board, 0)).to contain_exactly(*%w(f5 e4 d5 e7))
+          expect(rules.possible_movements(board, 1)).to contain_exactly(*%w(f6 e4 d6 e7))
         end
       end
     end
@@ -74,8 +74,8 @@ RSpec.describe Quoridor::Rules do
       end
 
       it 'allows movement to the sides if it is impossible to jump over the other pawn' do
-        expect(rules.possible_moves(board, 0)).to contain_exactly(*%w(f5 d5 f6))
-        expect(rules.possible_moves(board, 1)).to contain_exactly(*%w(f6 f5 d5))
+        expect(rules.possible_movements(board, 0)).to contain_exactly(*%w(f5 d5 f6))
+        expect(rules.possible_movements(board, 1)).to contain_exactly(*%w(f6 f5 d5))
       end
     end
 
@@ -89,10 +89,10 @@ RSpec.describe Quoridor::Rules do
       end
 
       it 'does not allow jumping over more than one pawn' do
-        expect(rules.possible_moves(board, 0)).to contain_exactly(*%w(e4 f5 d5))
-        expect(rules.possible_moves(board, 1)).to contain_exactly(*%w(e4 e8 c6))
-        expect(rules.possible_moves(board, 2)).to contain_exactly(*%w(e8 d7))
-        expect(rules.possible_moves(board, 3)).to contain_exactly(*%w(d7 d5 c6))
+        expect(rules.possible_movements(board, 0)).to contain_exactly(*%w(e4 f5 d5))
+        expect(rules.possible_movements(board, 1)).to contain_exactly(*%w(e4 e8 c6))
+        expect(rules.possible_movements(board, 2)).to contain_exactly(*%w(e8 d7))
+        expect(rules.possible_movements(board, 3)).to contain_exactly(*%w(d7 d5 c6))
       end
     end
   end
