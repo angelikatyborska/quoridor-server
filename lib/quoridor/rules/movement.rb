@@ -2,6 +2,10 @@ module Quoridor
   module Rules
     module Movement
       class << self
+        def correct_movement?(board, pawn_number, square)
+          possible_movements(board, pawn_number).include?(square)
+        end
+
         def possible_movements(board, pawn_number)
           pawn = board.pawns[pawn_number]
           possible_moves = can_move_to_adjacent_squares(board, pawn)

@@ -39,6 +39,16 @@ module Quoridor
       pawns.include?(square)
     end
 
+    def possible_fence_placement?(fence)
+      validate_fence(fence)
+      begin
+        validate_fence_placement(fence)
+        true
+      rescue ArgumentError
+        false
+      end
+    end
+
     def adjacent_squares(square)
       validate_square(square)
       DIRECTIONS.map { |direction| self.send(direction, square) }.compact
@@ -78,9 +88,17 @@ module Quoridor
       square_relative_to(square, [0, 1])
     end
 
+    def westmost_column
+      ROWS.map{|row| "#{COLUMNS.first}#{row}"}
+    end
+
     def westmost_column?(square)
       validate_square(square)
       square[0] == COLUMNS.first
+    end
+
+    def eastmost_column
+      ROWS.map{|row| "#{COLUMNS.last}#{row}"}
     end
 
     def eastmost_column?(square)
@@ -88,9 +106,17 @@ module Quoridor
       square[0] == COLUMNS.last
     end
 
+    def northmost_row
+      COLUMNS.map{|column| "#{column}#{ROWS.first}"}
+    end
+
     def northmost_row?(square)
       validate_square(square)
       square[1] == ROWS.first
+    end
+
+    def southmost_row
+      COLUMNS.map{|column| "#{column}#{ROWS.last}"}
     end
 
     def southmost_row?(square)
@@ -106,6 +132,13 @@ module Quoridor
     def vertical?(fence)
       validate_fence(fence)
       orientation(fence) == 'v'
+    end
+
+    def deep_clone
+      clone = self.class.new
+      pawns.each { |pawn| clone.add_pawn(pawn) }
+      fences.each { |fence| clone.add_fence(fence) }
+      clone
     end
 
     private

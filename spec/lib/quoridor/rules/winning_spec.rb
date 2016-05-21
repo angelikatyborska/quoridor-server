@@ -2,8 +2,8 @@ require_relative '../../../../lib/quoridor/rules/winning'
 require_relative '../../../../lib/quoridor/board'
 
 RSpec.describe(Quoridor::Rules::Winning) do
-  let(:rules) { Quoridor::Rules::Winning }
   let(:board) { Quoridor::Board.new }
+  let(:rules) { described_class }
 
   describe '#has_won?' do
     context 'pawns on their goal rows/columns' do

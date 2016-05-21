@@ -4,6 +4,7 @@ module Quoridor
       @board = board
     end
 
+    # TODO: MAKE FASTER! Probably change to A*
     def find(start_square, target_squares)
       distances = {}
       target_squares.each { |square| distances[square] = 0 }

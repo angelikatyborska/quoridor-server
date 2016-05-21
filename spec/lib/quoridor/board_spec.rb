@@ -96,7 +96,7 @@ RSpec.describe(Quoridor::Board) do
         expect { board.add_fence('c3v') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
       end
 
-      it 'allows a fence to the nort' do
+      it 'allows a fence to the north' do
         expect { board.add_fence('c2h') }.not_to raise_error
       end
 
@@ -148,6 +148,7 @@ RSpec.describe(Quoridor::Board) do
       board.add_pawn('e5')
       board.add_pawn('a1')
     end
+
     it 'detects invalid squares' do
       expect {board.pawn?('s3') }.to detect_invalid_square
     end
@@ -157,6 +158,39 @@ RSpec.describe(Quoridor::Board) do
       expect(board.pawn?('a1')).to be true
       expect(board.pawn?('d9')).to be false
       expect(board.pawn?('a2')).to be false
+    end
+  end
+
+  describe '#possible_fence_placement?' do
+    before(:each) do
+      board.add_fence('e5h')
+      board.add_fence('d4v')
+    end
+
+    it 'detects invalid squares' do
+      expect { board.add_fence('z3w') }.to detect_invalid_square
+    end
+
+    it 'detects invalid fence' do
+      expect { board.add_fence('e3w') }.to raise_error(ArgumentError, 'Invalid fence e3w')
+    end
+
+    it 'checks if placing a fence is physically possible' do
+      expect(board.possible_fence_placement?('d4h')).to be false
+      expect(board.possible_fence_placement?('d5h')).to be false
+      expect(board.possible_fence_placement?('e5h')).to be false
+      expect(board.possible_fence_placement?('f5h')).to be false
+
+      expect(board.possible_fence_placement?('d3h')).to be true
+      expect(board.possible_fence_placement?('e6h')).to be true
+
+      expect(board.possible_fence_placement?('d3v')).to be false
+      expect(board.possible_fence_placement?('d4v')).to be false
+      expect(board.possible_fence_placement?('d5v')).to be false
+      expect(board.possible_fence_placement?('e5v')).to be false
+
+      expect(board.possible_fence_placement?('d6v')).to be true
+      expect(board.possible_fence_placement?('e6v')).to be true
     end
   end
 
