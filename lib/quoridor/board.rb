@@ -3,7 +3,7 @@ module Quoridor
     COLUMNS = %w(a b c d e f g h i)
     ROWS = %w(9 8 7 6 5 4 3 2 1)
     ORIENTATIONS = %w(h v)
-    DIRECTIONS = %i(north east south west)
+    DIRECTIONS = %i(north south east west)
 
     attr_reader :fences, :pawns
 
@@ -50,6 +50,11 @@ module Quoridor
       end
 
       fail ArgumentError, "Squares #{square1} and #{square2} are not adjacent"
+    end
+
+    def directions_in_opposite_orientation(direction)
+      index = DIRECTIONS.index(direction)
+      index > 1 ? DIRECTIONS[0..1] : DIRECTIONS[2..3]
     end
 
     def east(square)

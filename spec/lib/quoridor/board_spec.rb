@@ -227,4 +227,20 @@ RSpec.describe(Quoridor::Board) do
       expect(board.direction('h2', 'g2')).to eq(:west)
     end
   end
+
+  describe '#directions_in_opposite_orientation' do
+    context 'north-south' do
+      it 'returns east-west' do
+        expect(board.directions_in_opposite_orientation(:north)).to contain_exactly(*%i(east west))
+        expect(board.directions_in_opposite_orientation(:south)).to contain_exactly(*%i(east west))
+      end
+    end
+
+    context 'east-west' do
+      it 'returns north-south' do
+        expect(board.directions_in_opposite_orientation(:east)).to contain_exactly(*%i(north south))
+        expect(board.directions_in_opposite_orientation(:west)).to contain_exactly(*%i(north south))
+      end
+    end
+  end
 end
