@@ -22,7 +22,7 @@ RSpec.describe Quoridor::Rules do
           board.add_pawn('i5')
         end
 
-        it 'fallows movement: north, south, west' do
+        it 'allows movement: north, south, west' do
           expect(rules.possible_moves(board, 0)).to contain_exactly('i6', 'h5', 'i4')
         end
       end
@@ -50,7 +50,20 @@ RSpec.describe Quoridor::Rules do
       end
     end
 
-    context 'no fences, many pawns'
+    context 'no fences, many pawns' do
+      context 'two pawns facing each other' do
+        before(:each) do
+          board.add_pawn('e5')
+          board.add_pawn('e6')
+        end
+
+        it 'allows to jump over the other pawn' do
+          expect(rules.possible_moves(board, 0)).to contain_exactly('f5', 'e4', 'd5', 'e7')
+          expect(rules.possible_moves(board, 1)).to contain_exactly('f6', 'e4', 'd6', 'e7')
+        end
+      end
+    end
+
     context 'some fences, many pawns'
   end
 end

@@ -143,28 +143,28 @@ RSpec.describe(Quoridor::Board) do
     end
   end
 
-  describe '#neighboring_squares' do
+  describe '#adjacent_squares' do
     context 'square in the middle' do
-      subject(:neighboring) { board.neighboring_squares('e4') }
+      subject(:adjacent) { board.adjacent_squares('e4') }
 
-      it 'returns neighboring squares' do
-        expect(neighboring).to contain_exactly('e5', 'd4', 'e3', 'f4')
+      it 'returns adjacent squares' do
+        expect(adjacent).to contain_exactly('e5', 'd4', 'e3', 'f4')
       end
     end
 
     context 'square in the top row' do
-      subject(:neighboring) { board.neighboring_squares('d9') }
+      subject(:adjacent) { board.adjacent_squares('d9') }
 
-      it 'returns neighboring squares' do
-        expect(neighboring).to contain_exactly('c9', 'd8', 'e9')
+      it 'returns adjacent squares' do
+        expect(adjacent).to contain_exactly('c9', 'd8', 'e9')
       end
     end
 
     context 'square in the bottom left corner' do
-      subject(:neighboring) { board.neighboring_squares('a1') }
+      subject(:adjacent) { board.adjacent_squares('a1') }
 
-      it 'returns neighboring squares' do
-        expect(neighboring).to contain_exactly('b1', 'a2')
+      it 'returns adjacent squares' do
+        expect(adjacent).to contain_exactly('b1', 'a2')
       end
     end
   end
@@ -194,6 +194,37 @@ RSpec.describe(Quoridor::Board) do
       expect(board.east('a1')).to eq('b1')
       expect(board.south('a1')).to be nil
       expect(board.west('a1')).to be nil
+    end
+  end
+
+  describe '#direction' do
+    it 'detects invalid squares' do
+      expect { board.direction('a1', 'x1') }.to detect_invalid_square
+      expect { board.direction('asdf', 'a1') }.to detect_invalid_square
+    end
+
+    it 'expects adjacent squares' do
+      expect { board.direction('a1', 'e7') }.to raise_error(ArgumentError, 'Squares a1 and e7 are not adjacent')
+    end
+
+    it 'detects north' do
+      expect(board.direction('e5', 'e6')).to eq(:north)
+      expect(board.direction('a1', 'a2')).to eq(:north)
+    end
+
+    it 'detects east' do
+      expect(board.direction('e5', 'f5')).to eq(:east)
+      expect(board.direction('h1', 'i1')).to eq(:east)
+    end
+
+    it 'detects south' do
+      expect(board.direction('e5', 'e4')).to eq(:south)
+      expect(board.direction('h2', 'h1')).to eq(:south)
+    end
+
+    it 'detects west' do
+      expect(board.direction('e5', 'd5')).to eq(:west)
+      expect(board.direction('h2', 'g2')).to eq(:west)
     end
   end
 end

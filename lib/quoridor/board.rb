@@ -3,6 +3,7 @@ module Quoridor
     COLUMNS = %w(a b c d e f g h i)
     ROWS = %w(9 8 7 6 5 4 3 2 1)
     ORIENTATIONS = %w(h v)
+    DIRECTIONS = %i(north east south west)
 
     attr_reader :fences, :pawns
 
@@ -33,10 +34,22 @@ module Quoridor
       @fences.any? { |fence| fence_between?(fence, square1, square2) }
     end
 
-    def neighboring_squares(square)
+    def adjacent_squares(square)
       validate_square(square)
-      directions = %w(north east south west)
-      directions.map { |direction| self.send(direction, square) }.compact
+      DIRECTIONS.map { |direction| self.send(direction, square) }.compact
+    end
+
+    def direction(square1, square2)
+      validate_square(square1)
+      validate_square(square2)
+
+      DIRECTIONS.each do |direction|
+        if self.send(direction, square1) == square2
+          return direction
+        end
+      end
+
+      fail ArgumentError, "Squares #{square1} and #{square2} are not adjacent"
     end
 
     def east(square)
@@ -138,7 +151,7 @@ module Quoridor
     end
 
     def fence_between?(fence, square1, square2)
-      return false unless neighboring_squares(square1).include?(square2)
+      return false unless adjacent_squares(square1).include?(square2)
 
       square1, square2 = sort_squares(square1, square2)
 
