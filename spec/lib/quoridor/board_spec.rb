@@ -143,6 +143,23 @@ RSpec.describe(Quoridor::Board) do
     end
   end
 
+  describe '#pawn?' do
+    before(:each) do
+      board.add_pawn('e5')
+      board.add_pawn('a1')
+    end
+    it 'detects invalid squares' do
+      expect {board.pawn?('s3') }.to detect_invalid_square
+    end
+
+    it 'checks if there is a pawn on the square' do
+      expect(board.pawn?('e5')).to be true
+      expect(board.pawn?('a1')).to be true
+      expect(board.pawn?('d9')).to be false
+      expect(board.pawn?('a2')).to be false
+    end
+  end
+
   describe '#adjacent_squares' do
     context 'square in the middle' do
       subject(:adjacent) { board.adjacent_squares('e4') }

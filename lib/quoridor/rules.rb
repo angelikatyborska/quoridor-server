@@ -21,7 +21,7 @@ module Quoridor
 
     def cannot_move_to_occupied_squares(board, pawn, moves)
       moves.map do |square|
-        if square_occupied?(board, square)
+        if board.pawn?(square)
           tries_to_move_behind_other_pawn(board, pawn, square)
         else
           [square]
@@ -43,15 +43,11 @@ module Quoridor
       directions = board.directions_in_opposite_orientation(original_direction)
       possible_moves = directions.map {|direction| board.send(direction, original_square)}
       possible_moves = cannot_jump_over_fences(board, original_square, possible_moves)
-      possible_moves.reject {|square| square_occupied?(board, square)}
+      possible_moves.reject {|square| board.pawn?(square)}
     end
 
     def can_move?(board, from, to)
-      !(board.fence?(from, to) || square_occupied?(board, to))
-    end
-
-    def square_occupied?(board, square)
-      board.pawns.include?(square)
+      !(board.fence?(from, to) || board.pawn?(to))
     end
   end
 end

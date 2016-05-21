@@ -34,6 +34,11 @@ module Quoridor
       @fences.any? { |fence| fence_between?(fence, square1, square2) }
     end
 
+    def pawn?(square)
+      validate_square(square)
+      pawns.include?(square)
+    end
+
     def adjacent_squares(square)
       validate_square(square)
       DIRECTIONS.map { |direction| self.send(direction, square) }.compact
