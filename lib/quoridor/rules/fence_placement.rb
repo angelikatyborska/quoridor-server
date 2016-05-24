@@ -32,7 +32,8 @@ module Quoridor
         end
 
         def cannot_cut_off_path_to_goals(board, placements)
-          # TODO: do not check if there is only one fence (cut off is not possible then)
+          return placements if placements.length <= 1
+
           placements.reject do |placement|
             future_board = board.deep_clone
             future_board.add_fence(placement)
