@@ -1,4 +1,5 @@
-require_relative '../../../lib/quoridor/board'
+require_relative '../../lib/quoridor/board'
+require_relative '../../lib/quoridor/errors'
 
 RSpec.describe(Quoridor::Board) do
   let(:board) { described_class.new }
@@ -16,7 +17,7 @@ RSpec.describe(Quoridor::Board) do
 
     it 'does not allow to put a pawn on a pawn' do
       board.add_pawn('a1')
-      expect { board.add_pawn('a1') }.to raise_error(ArgumentError, 'Square a1 is already taken by pawn 0')
+      expect { board.add_pawn('a1') }.to raise_error(Quoridor::InvalidSquare, 'Invalid square a1: already taken by pawn 0')
     end
   end
 
@@ -41,7 +42,7 @@ RSpec.describe(Quoridor::Board) do
 
     it 'does not allow to put a pawn on a pawn' do
       board.add_pawn('e4')
-      expect { board.move_pawn(0, 'e4') }.to raise_error(ArgumentError, 'Square e4 is already taken by pawn 1')
+      expect { board.move_pawn(0, 'e4') }.to raise_error(Quoridor::InvalidSquare, 'Invalid square e4: already taken by pawn 1')
     end
   end
 
@@ -51,7 +52,7 @@ RSpec.describe(Quoridor::Board) do
     end
 
     it 'detects invalid fences' do
-      expect { board.add_fence('a1z') }.to raise_error(ArgumentError, 'Invalid fence a1z')
+      expect { board.add_fence('a1z') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence a1z')
     end
 
     context 'in the middle of an empty board' do
@@ -66,21 +67,21 @@ RSpec.describe(Quoridor::Board) do
 
     context 'in the southernmost row' do
         it 'does not allow vertically' do
-          expect { board.add_fence('a1v') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+          expect { board.add_fence('a1v') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence a1v: out of border bounds')
         end
 
         it 'does not allow horizontally' do
-          expect { board.add_fence('a1h') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+          expect { board.add_fence('a1h') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence a1h: out of border bounds')
         end
     end
 
     context 'in the easternmost column' do
         it 'does not allow vertically' do
-          expect { board.add_fence('i5v') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+          expect { board.add_fence('i5v') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence i5v: out of border bounds')
         end
 
         it 'does not allow horizontally' do
-          expect { board.add_fence('i5h') }.to raise_error(ArgumentError, 'Cannot place a fence outside of the board')
+          expect { board.add_fence('i5h') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence i5h: out of border bounds')
         end
     end
 
@@ -90,10 +91,10 @@ RSpec.describe(Quoridor::Board) do
       end
 
       it 'does not allow overlapping' do
-        expect { board.add_fence('b3h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
-        expect { board.add_fence('c3h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
-        expect { board.add_fence('d3h') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
-        expect { board.add_fence('c3v') }.to raise_error(ArgumentError, 'Cannot place a fence on another fence')
+        expect { board.add_fence('b3h') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence b3h: overlapping c3h')
+        expect { board.add_fence('c3h') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence c3h: overlapping c3h')
+        expect { board.add_fence('d3h') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence d3h: overlapping c3h')
+        expect { board.add_fence('c3v') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence c3v: overlapping c3h')
       end
 
       it 'allows a fence to the north' do
@@ -172,7 +173,7 @@ RSpec.describe(Quoridor::Board) do
     end
 
     it 'detects invalid fence' do
-      expect { board.add_fence('e3w') }.to raise_error(ArgumentError, 'Invalid fence e3w')
+      expect { board.add_fence('e3w') }.to raise_error(Quoridor::InvalidFence, 'Invalid fence e3w')
     end
 
     it 'checks if placing a fence is physically possible' do
@@ -255,7 +256,7 @@ RSpec.describe(Quoridor::Board) do
     end
 
     it 'expects adjacent squares' do
-      expect { board.direction('a1', 'e7') }.to raise_error(ArgumentError, 'Squares a1 and e7 are not adjacent')
+      expect { board.direction('a1', 'e7') }.to raise_error(Quoridor::InvalidSquare, 'Invalid square e7: not adjacent to a1')
     end
 
     it 'detects north' do

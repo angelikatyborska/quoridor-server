@@ -1,4 +1,5 @@
 require 'rspec/expectations'
+require_relative '../../../lib/quoridor/errors'
 
 RSpec::Matchers.define :detect_invalid_pawn do |expected|
   supports_block_expectations
@@ -7,8 +8,8 @@ RSpec::Matchers.define :detect_invalid_pawn do |expected|
     begin
       actual.call
       return false
-    rescue ArgumentError => e
-      return e.message.match(/\APawn with index .* does not exist\z/)
+    rescue Quoridor::InvalidPawn => e
+      return e.message.match(/\AInvalid pawn .*\z/)
     end
   end
 

@@ -1,4 +1,4 @@
-require_relative '../../../../lib/quoridor/rules/fence_placement'
+require_relative '../../../lib/quoridor/rules/fence_placement'
 
 RSpec.describe(Quoridor::Rules::FencePlacement) do
   let(:board) { Quoridor::Board.new }

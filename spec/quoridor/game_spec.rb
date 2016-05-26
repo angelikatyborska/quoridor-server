@@ -1,4 +1,5 @@
-require_relative '../../../lib/quoridor/game'
+require_relative '../../lib/quoridor/game'
+require_relative '../../lib/quoridor/errors'
 
 RSpec.describe(Quoridor::Game) do
   describe '.new' do
@@ -13,10 +14,10 @@ RSpec.describe(Quoridor::Game) do
     it 'does not allow any other number of players' do
       error_message = 'Only 2 or 4 players per game allowed'
 
-      expect { described_class.new([]) }.to raise_error(ArgumentError, error_message)
-      expect { described_class.new([nil,]) }.to raise_error(ArgumentError, error_message)
-      expect { described_class.new([nil, nil, nil]) }.to raise_error(ArgumentError, error_message)
-      expect { described_class.new([nil, nil, nil, nil, nil, nil]) }.to raise_error(ArgumentError, error_message)
+      expect { described_class.new([]) }.to raise_error(Quoridor::InvalidNumberOfPlayers, error_message)
+      expect { described_class.new([nil,]) }.to raise_error(Quoridor::InvalidNumberOfPlayers, error_message)
+      expect { described_class.new([nil, nil, nil]) }.to raise_error(Quoridor::InvalidNumberOfPlayers, error_message)
+      expect { described_class.new([nil, nil, nil, nil, nil, nil]) }.to raise_error(Quoridor::InvalidNumberOfPlayers, error_message)
     end
   end
 
@@ -46,21 +47,21 @@ RSpec.describe(Quoridor::Game) do
     let(:game) { described_class.new(['Quark', 'Rom'])}
 
     it 'checks whose turn it is' do
-      expect { game.move(1, 'e2') }.to raise_error(ArgumentError, 'It is not player 1\'s turn')
+      expect { game.move(1, 'e2') }.to raise_error(Quoridor::OutOfTurn, 'It is not player 1\'s turn')
     end
 
     it 'detect invalid move' do
-      expect { game.move(0, 'asdfasdf') }.to raise_error(ArgumentError, 'Invalid move asdfasdf')
+      expect { game.move(0, 'asdfasdf') }.to raise_error(Quoridor::InvalidMove, 'Invalid move asdfasdf')
     end
 
     it 'detect invalid movement' do
-      expect { game.move(0, 'e5') }.to raise_error(ArgumentError, 'Invalid movement e5 for player 0')
+      expect { game.move(0, 'e5') }.to raise_error(Quoridor::InvalidMovement, 'Invalid movement e5 for player 0')
     end
 
     it 'detect invalid fence placement' do
       game.move(0, 'd2v')
       game.move(1, 'e2v')
-      expect { game.move(0, 'd3h') }.to raise_error(ArgumentError, 'Invalid fence placement d3h')
+      expect { game.move(0, 'd3h') }.to raise_error(Quoridor::InvalidFencePlacement, 'Invalid fence placement d3h')
     end
 
     it 'returns a winner' do

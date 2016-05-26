@@ -1,5 +1,5 @@
-require_relative '../../../lib/quoridor/path_finder'
-require_relative '../../../lib/quoridor/board'
+require_relative '../../lib/quoridor/path_finder'
+require_relative '../../lib/quoridor/board'
 
 RSpec.describe(Quoridor::PathFinder) do
   let(:board) { Quoridor::Board.new }

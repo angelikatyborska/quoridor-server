@@ -1,3 +1,5 @@
+require_relative 'errors'
+
 module Quoridor
   class Board
     COLUMNS = %w(a b c d e f g h i)
@@ -44,7 +46,7 @@ module Quoridor
       begin
         validate_fence_placement(fence)
         true
-      rescue ArgumentError
+      rescue Quoridor::InvalidFence
         false
       end
     end
@@ -64,7 +66,7 @@ module Quoridor
         end
       end
 
-      fail ArgumentError, "Squares #{square1} and #{square2} are not adjacent"
+      fail Quoridor::InvalidSquare.new("#{square2}: not adjacent to #{square1}")
     end
 
     def directions_in_opposite_orientation(direction)
@@ -155,7 +157,7 @@ module Quoridor
       validate_square(square)
 
       if @pawns.index(square)
-        fail ArgumentError, "Square #{square} is already taken by pawn #{@pawns.index(square)}"
+        fail Quoridor::InvalidSquare.new("#{square}: already taken by pawn #{@pawns.index(square)}")
       end
 
       @pawns[index] = square
@@ -163,9 +165,8 @@ module Quoridor
 
     def validate_square(square)
       unless square.length == 2 && COLUMNS.include?(square[0]) && ROWS.include?(square[1])
-        fail ArgumentError, "Invalid square #{square}, "\
-      "must be between #{COLUMNS.first}#{ROWS.first} "\
-      "and #{COLUMNS.last}#{ROWS.last}"
+        message = "#{square}, must be between #{COLUMNS.first}#{ROWS.first} and #{COLUMNS.last}#{ROWS.last}"
+        fail Quoridor::InvalidSquare.new(message)
       end
     end
 
@@ -173,23 +174,25 @@ module Quoridor
       validate_square(square(fence))
 
       unless ORIENTATIONS.include?(orientation(fence)) && fence.length == 3
-        fail ArgumentError, "Invalid fence #{fence}"
+        fail Quoridor::InvalidFence.new(fence)
       end
     end
 
     def validate_fence_placement(fence)
       if southmost_row?(square(fence)) || eastmost_column?(square(fence))
-        fail ArgumentError, 'Cannot place a fence outside of the board'
+        fail Quoridor::InvalidFence.new("#{fence}: out of border bounds")
       end
 
-      if @fences.any? { |other_fence| fences_overlapping?(fence, other_fence) }
-        fail ArgumentError, 'Cannot place a fence on another fence'
+      @fences.each do |other_fence|
+        if fences_overlapping?(fence, other_fence)
+          fail Quoridor::InvalidFence.new("#{fence}: overlapping #{other_fence}")
+        end
       end
     end
 
     def validate_pawn(index)
       unless pawns[index]
-        fail ArgumentError, "Pawn with index #{index} does not exist"
+        fail Quoridor::InvalidPawn.new(index)
       end
     end
 

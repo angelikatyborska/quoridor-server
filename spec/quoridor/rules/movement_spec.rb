@@ -1,5 +1,5 @@
-require_relative '../../../../lib/quoridor/board'
-require_relative '../../../../lib/quoridor/rules/movement'
+require_relative '../../../lib/quoridor/board'
+require_relative '../../../lib/quoridor/rules/movement'
 
 RSpec.describe Quoridor::Rules::Movement do
   let(:board) { Quoridor::Board.new }

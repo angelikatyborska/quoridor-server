@@ -1,4 +1,5 @@
 require 'rspec/expectations'
+require_relative '../../../lib/quoridor/errors'
 
 RSpec::Matchers.define :detect_invalid_square do |expected|
   supports_block_expectations
@@ -7,7 +8,7 @@ RSpec::Matchers.define :detect_invalid_square do |expected|
     begin
       actual.call
       return false
-    rescue ArgumentError => e
+    rescue Quoridor::InvalidSquare => e
       return e.message.match(/\AInvalid square .*, must be between a9 and i1\z/)
     end
   end
