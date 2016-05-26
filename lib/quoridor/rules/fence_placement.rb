@@ -5,15 +5,15 @@ require_relative '../path_finder'
 module Quoridor
   module Rules
     module FencePlacement
-      class << self
-        ALL_POSSIBLE_FENCE_PLACEMENTS = Quoridor::Board::COLUMNS[0..-2].each_with_object([]) do |column, all|
-          Quoridor::Board::ROWS[0..-2].each do |row|
-            Quoridor::Board::ORIENTATIONS.each do |orientation|
-              all << "#{column}#{row}#{orientation}"
-            end
+      ALL_POSSIBLE_FENCE_PLACEMENTS = Quoridor::Board::COLUMNS[0..-2].each_with_object([]) do |column, all|
+        Quoridor::Board::ROWS[0..-2].each do |row|
+          Quoridor::Board::ORIENTATIONS.each do |orientation|
+            all << "#{column}#{row}#{orientation}"
           end
         end
+      end
 
+      class << self
         def correct_fence_placement?(board, fence)
           possible_fence_placements(board).include?(fence)
         end
