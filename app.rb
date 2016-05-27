@@ -1,7 +1,7 @@
 require 'faye/websocket'
 require_relative 'lib/quoridor/lobby'
 
-quoridor = Quoridor::Lobby.new
+lobby = Quoridor::Lobby.new
 
 App = lambda do |env|
   if Faye::WebSocket.websocket?(env)
@@ -12,7 +12,7 @@ App = lambda do |env|
     ws.on :open do |event|
       puts [env['REMOTE_ADDR'], :open]
 
-      player = quoridor.add_player(ws)
+      player = lobby.add_player(ws)
 
       ping_loop = EM.add_periodic_timer(3) do
         ws.ping
@@ -22,16 +22,18 @@ App = lambda do |env|
     ws.on :message do |event|
       puts [env['REMOTE_ADDR'], :message, event.data]
 
-      quoridor.players[player.id].nickname = event.data
-      ws.send(
-        quoridor.players.map{ |id, player| player.nickname }.join(' and ')
-      )
+      begin
+        lobby.reception_desk(player, event.data)
+      rescue StandardError => e
+        ws.send(e.message)
+      end
+
     end
 
     ws.on :close do |event|
       EM.cancel_timer(ping_loop)
 
-      quoridor.remove_player(player.id)
+      lobby.remove_player(player)
       p [env[ 'REMOTE_ADDR'], :close, event.code, event.reason]
       ws = nil
     end
