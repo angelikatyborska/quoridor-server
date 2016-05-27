@@ -11,7 +11,7 @@ module Quoridor
     end
 
     def to_s
-      "Player #{id}"
+      "Player #{id[0..5]}"
     end
 
     def inspect

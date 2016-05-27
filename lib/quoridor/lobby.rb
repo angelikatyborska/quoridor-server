@@ -17,11 +17,7 @@ module Quoridor
       @notification_queues = Hash.new { |hash, key| hash[key] = [] }
     end
 
-    def players
-      @players
-    end
-
-    def unassigned_players
+    def players_in_lobby
       @players.reject { |player| @players_ids_to_rooms_ids.include?(player.id) }
     end
 
@@ -74,7 +70,7 @@ module Quoridor
 
     def self_state
       {
-        unassigned_players: unassigned_players,
+        players_in_lobby: players_in_lobby,
         rooms: @rooms
       }
     end
@@ -124,11 +120,15 @@ module Quoridor
     end
 
     def start_game(player)
-      @rooms.find { |room| room.id == @players_ids_to_rooms_ids[player.id] }.start_game(player)
+      room = @rooms.find { |room| room.id == @players_ids_to_rooms_ids[player.id] }
+      room.start_game(player)
+      notify("room#{room.id}", {room: room.state})
     end
 
     def move(player, data)
-      @rooms.find { |room| room.id == @players_ids_to_rooms_ids[player.id] }.move(player, data['move'])
+      room = @rooms.find { |room| room.id == @players_ids_to_rooms_ids[player.id] }
+      room.move(player, data['move'])
+      notify("room#{room.id}", {room: room.state})
     end
 
     def put_player_in_room(player, room)

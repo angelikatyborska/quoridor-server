@@ -17,6 +17,15 @@ module Quoridor
       @turn = 0
     end
 
+    def state
+      {
+        turn: @turn,
+        fences: @board.fences,
+        pawns: @board.pawns,
+        winner: @winner
+      }
+    end
+
     # TODO: refactor
     def move(player, move)
       fail Quoridor::OutOfTurn.new(player) if turn != player
@@ -39,8 +48,8 @@ module Quoridor
 
       begin
         make_a_move.call
+        @winner = player if Quoridor::Rules::Winning.has_won?(@board, player)
         increment_turn
-        Quoridor::Rules::Winning.has_won?(@board, player) ? { winner: player } : {}
       rescue Quoridor::Error => e
         fail Quoridor::InvalidMove.new("#{move}: #{e.message}")
       end

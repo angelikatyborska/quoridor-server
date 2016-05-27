@@ -23,7 +23,8 @@ module Quoridor
         capacity: @capacity,
         players: @players,
         owner: @owner,
-        id: @id
+        id: @id,
+        game: @game ? @game.state : nil
       }
     end
 
@@ -47,6 +48,8 @@ module Quoridor
 
     def move(player, move)
       fail 'Game is not started' unless @game
+      fail 'Game has ended' if @winner
+
       @game.move(@players.index(player), move)
       puts "Player #{@players.index(player)} move: #{move}"
     end
