@@ -12,12 +12,16 @@ RSpec.describe(Quoridor::Game) do
     end
 
     it 'does not allow any other number of players' do
-      error_message = 'Only 2 or 4 players per game allowed'
+      error_message = ->(n) { "Invalid number of players #{n}, allowed: 2, 4" }
 
-      expect { described_class.new([]) }.to raise_error(Quoridor::InvalidNumberOfPlayers, error_message)
-      expect { described_class.new([nil,]) }.to raise_error(Quoridor::InvalidNumberOfPlayers, error_message)
-      expect { described_class.new([nil, nil, nil]) }.to raise_error(Quoridor::InvalidNumberOfPlayers, error_message)
-      expect { described_class.new([nil, nil, nil, nil, nil, nil]) }.to raise_error(Quoridor::InvalidNumberOfPlayers, error_message)
+      expect { described_class.new([]) }
+        .to raise_error(Quoridor::InvalidNumberOfPlayers, error_message.(0))
+      expect { described_class.new([nil,]) }
+        .to raise_error(Quoridor::InvalidNumberOfPlayers, error_message.(1))
+      expect { described_class.new([nil, nil, nil]) }
+        .to raise_error(Quoridor::InvalidNumberOfPlayers, error_message.(3))
+      expect { described_class.new([nil, nil, nil, nil, nil, nil]) }
+        .to raise_error(Quoridor::InvalidNumberOfPlayers, error_message.(6))
     end
   end
 

@@ -7,13 +7,13 @@ module Quoridor
     attr_reader :turn
 
     def initialize(players)
-      unless [2,4].include?(players.length)
-        fail InvalidNumberOfPlayers
+      unless Quoridor::Rules::Players::ALLOWED_NUMBERS_OF_PLAYERS.include?(players.length)
+        fail Quoridor::InvalidNumberOfPlayers.new(players.length)
       end
 
       @players = players
       @board = Quoridor::Board.new
-      @players.length.times { |n| @board.add_pawn(Quoridor::Rules::Winning::PLAYERS[n][:starting_position]) }
+      @players.length.times { |n| @board.add_pawn(Quoridor::Rules::Players::PLAYERS[n][:starting_position]) }
       @turn = 0
     end
 

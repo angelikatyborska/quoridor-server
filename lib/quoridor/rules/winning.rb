@@ -1,13 +1,8 @@
+require_relative 'players'
+
 module Quoridor
   module Rules
     module Winning
-      PLAYERS = [
-        {starting_position: 'e9', goal: 'southmost_row'},
-        {starting_position: 'e1', goal: 'northmost_row'},
-        {starting_position: 'a5', goal: 'eastmost_column'},
-        {starting_position: 'i5', goal: 'westmost_column'}
-      ]
-
       class << self
         def has_won?(board, player_number)
           pawn = board.pawns[player_number]
@@ -15,7 +10,7 @@ module Quoridor
         end
 
         def goal(player_number)
-          PLAYERS[player_number][:goal]
+          Quoridor::Rules::Players::PLAYERS[player_number][:goal]
         end
       end
     end
