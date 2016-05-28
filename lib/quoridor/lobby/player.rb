@@ -7,16 +7,24 @@ module Quoridor
 
       def initialize(websocket)
         @id = SecureRandom.base64
-        @nickname = 'guest' + @id
+        @nickname = nil
         @websocket = websocket
       end
 
-      def to_s
-        "Player #{id[0..5]}"
+      def notify(message)
+        @websocket.send(message)
       end
 
-      def inspect
-        to_s
+      def introduce_yourself(nickname)
+        @nickname = nickname
+      end
+
+      def to_s
+        nickname
+      end
+
+      def to_json(options = {})
+        { nickname: nickname }.to_json
       end
     end
   end

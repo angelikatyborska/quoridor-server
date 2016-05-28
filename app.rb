@@ -3,7 +3,7 @@ require_relative 'lib/quoridor/lobby'
 
 # TODO: add exception_notification middleware
 
-lobby = Quoridor::Lobby::Lobby.new
+lobby = Quoridor::Lobby::ReceptionDesk.new
 
 App = lambda do |env|
   if Faye::WebSocket.websocket?(env)
@@ -14,7 +14,7 @@ App = lambda do |env|
     ws.on :open do |event|
       puts [env['REMOTE_ADDR'], :open]
 
-      player = lobby.add_player(ws)
+      player = Quoridor::Lobby::Player.new(ws)
 
       ping_loop = EM.add_periodic_timer(3) do
         ws.ping
@@ -25,7 +25,7 @@ App = lambda do |env|
       puts [env['REMOTE_ADDR'], :message, event.data]
 
       begin
-        lobby.reception_desk(player, event.data)
+        lobby.request(player, event.data)
       rescue StandardError => e
         ws.send(e.message)
       end
@@ -35,7 +35,7 @@ App = lambda do |env|
     ws.on :close do |event|
       EM.cancel_timer(ping_loop)
 
-      lobby.remove_player(player)
+      lobby.request(player, {type: 'LEAVE'}.to_json)
       p [env[ 'REMOTE_ADDR'], :close, event.code, event.reason]
       ws = nil
     end

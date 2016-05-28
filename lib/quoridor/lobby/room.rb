@@ -11,7 +11,7 @@ module Quoridor
       attr_reader :capacity
 
       # TODO: add a description/name
-      # TODO: add invitation only joining
+      # TODO: add invitation-only joining
       def initialize(owner, capacity)
         @capacity = capacity
         @players = []
@@ -27,10 +27,10 @@ module Quoridor
       def state
         {
           capacity: capacity,
+          spots_left: capacity - players.length,
           players: players,
           owner: owner,
-          id: id,
-          game: game ? game.state : nil
+          id: id
         }
       end
 
@@ -44,23 +44,37 @@ module Quoridor
         @players.delete(player)
 
         # TODO: force end game
+
+        notify
       end
 
       def start_game(player)
         fail 'Only owner can start the game' unless player == owner
         fail 'Not enough players' unless start_game?
 
-        @game = Game::Game.new(players.map(&:nickname))
-      end
+        @game = Game::Game.new(players.map(&:to_s))
 
-      def start_game?
-        capacity == players.length
+        notify
       end
 
       def move(player, move)
         fail 'Game has not started yet' unless game
 
         game.move(players.index(player), move)
+
+        notify
+      end
+
+      def start_game?
+        capacity == players.length
+      end
+
+      private
+
+      def notify
+        players.each do |player|
+          player.notify(game.state.to_json)
+        end
       end
     end
   end
