@@ -77,14 +77,22 @@ RSpec.describe(Quoridor::Game) do
       expect { game.move(0, 'f3h') }.to raise_error(Quoridor::InvalidFencePlacement, 'Invalid fence placement f3h')
     end
 
-    it 'returns a winner' do
+    it 'sets the winner' do
       %w(e8 e2 e7 e3 e6 e4 e5 e6 e4 e7 e3 e8 e2).each_with_index do |move, index|
-        result = game.move(index % 2, move)
-        expect(result[:winner]).to be nil
+        game.move(index % 2, move)
+        expect(game.winner).to be nil
       end
 
-      result = game.move(1, 'e9')
-      expect(result[:winner]).to be 1
+      game.move(1, 'e9')
+      expect(game.winner).to eq(1)
+    end
+
+    it 'detects there already is a winner' do
+      %w(e8 e2 e7 e3 e6 e4 e5 e6 e4 e7 e3 e8 e2 e9).each_with_index do |move, index|
+        game.move(index % 2, move)
+      end
+
+      expect { game.move(0, 'e1') }.to raise_error(Quoridor::Error, 'Game has already ended')
     end
   end
 
