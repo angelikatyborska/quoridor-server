@@ -5,6 +5,7 @@ require_relative '../path_finder'
 module Quoridor
   module Rules
     module FencePlacement
+      LIMIT_PER_PLAYER = 10
       ALL_POSSIBLE_FENCE_PLACEMENTS = Quoridor::Board::COLUMNS[0..-2].each_with_object([]) do |column, all|
         Quoridor::Board::ROWS[0..-2].each do |row|
           Quoridor::Board::ORIENTATIONS.each do |orientation|

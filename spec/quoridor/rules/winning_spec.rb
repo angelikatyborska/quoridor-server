@@ -1,6 +1,5 @@
 require_relative '../../../lib/quoridor/rules/winning'
 require_relative '../../../lib/quoridor/board'
-require_relative '../../../lib/quoridor/board'
 
 RSpec.describe(Quoridor::Rules::Winning) do
   let(:board) { Quoridor::Board.new }

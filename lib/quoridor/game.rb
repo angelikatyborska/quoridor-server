@@ -6,7 +6,6 @@ module Quoridor
   class Game
     attr_reader :turn
 
-    # TODO: add a limit of 10 fences
     def initialize(players)
       unless Quoridor::Rules::Players::ALLOWED_NUMBERS_OF_PLAYERS.include?(players.length)
         fail Quoridor::InvalidNumberOfPlayers.new(players.length)
@@ -14,21 +13,30 @@ module Quoridor
 
       @players = players
       @board = Quoridor::Board.new
-      @players.length.times { |n| @board.add_pawn(Quoridor::Rules::Players::PLAYERS[n][:starting_position]) }
       @turn = 0
       @winner = nil
+      @fences_left = []
+      @players.length.times do |n|
+        @board.add_pawn(Quoridor::Rules::Players::PLAYERS[n][:starting_position])
+        @fences_left << Quoridor::Rules::FencePlacement::LIMIT_PER_PLAYER
+      end
     end
 
     def state
       {
         turn: @turn,
-        possible_moves: {
-          fence: Quoridor::Rules::FencePlacement.possible_fence_placements(@board),
-          movements: Quoridor::Rules::Movement.possible_movements(@board, @turn)
-        },
         fences: @board.fences,
         pawns: @board.pawns,
-        winner: @winner
+        winner: @winner,
+        fences_left: @fences_left,
+        possible_moves: possible_moves,
+      }
+    end
+
+    def possible_moves
+      {
+        fences: @fences_left[@turn] > 0 ? Quoridor::Rules::FencePlacement.possible_fence_placements(@board) : [],
+        movements: Quoridor::Rules::Movement.possible_movements(@board, @turn)
       }
     end
 
@@ -64,8 +72,11 @@ module Quoridor
     end
 
     def fence(player, move)
-      if Quoridor::Rules::FencePlacement.correct_fence_placement?(@board, move)
-        Proc.new { @board.add_fence(move) }
+      if Quoridor::Rules::FencePlacement.correct_fence_placement?(@board, move) && @fences_left[player] > 0
+        Proc.new  do
+          @fences_left[player] -= 1
+          @board.add_fence(move)
+        end
       else
         fail Quoridor::InvalidFencePlacement.new(move)
       end

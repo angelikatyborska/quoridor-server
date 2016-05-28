@@ -62,10 +62,19 @@ RSpec.describe(Quoridor::Game) do
       expect { game.move(0, 'e5') }.to raise_error(Quoridor::InvalidMovement, 'Invalid movement e5 for player 0')
     end
 
-    it 'detect invalid fence placement' do
+    it 'detects invalid fence placement' do
       game.move(0, 'd2v')
       game.move(1, 'e2v')
       expect { game.move(0, 'd3h') }.to raise_error(Quoridor::InvalidFencePlacement, 'Invalid fence placement d3h')
+    end
+
+    it 'detects player has no fences left' do
+      10.times do |n|
+        game.move(0, "#{n % 2 == 1 ? 'a' : 'c'}#{n % 7 + 2}h")
+        game.move(1, "e#{n % 2 + 2}")
+      end
+
+      expect { game.move(0, 'f3h') }.to raise_error(Quoridor::InvalidFencePlacement, 'Invalid fence placement f3h')
     end
 
     it 'returns a winner' do
@@ -76,6 +85,25 @@ RSpec.describe(Quoridor::Game) do
 
       result = game.move(1, 'e9')
       expect(result[:winner]).to be 1
+    end
+  end
+
+  describe '#state' do
+    let(:game) { described_class.new(['Jake', 'Nog'])}
+
+    before(:each) do
+      game.move(0, 'e8')
+      game.move(1, 'e2')
+      game.move(0, 'h3h')
+    end
+
+    it 'returns info about game state' do
+      expect(game.state[:pawns]).to match_array(%w(e8 e2))
+      expect(game.state[:fences]).to match_array(%w(h3h))
+      expect(game.state[:possible_moves]).to include(:fences, :movements)
+      expect(game.state[:turn]).to eq(1)
+      expect(game.state[:winner]).to eq(nil)
+      expect(game.state[:fences_left]).to eq([9, 10])
     end
   end
 end
