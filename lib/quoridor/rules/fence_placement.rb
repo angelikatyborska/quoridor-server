@@ -1,13 +1,13 @@
-require_relative '../rules/winning'
-require_relative '../board'
-require_relative '../path_finder'
+require_relative 'winning'
+require_relative '../game/board'
+require_relative '../game/path_finder'
 
 module Quoridor
   module Rules
     module FencePlacement
-      ALL_POSSIBLE_FENCE_PLACEMENTS = Quoridor::Board::COLUMNS[0..-2].each_with_object([]) do |column, all|
-        Quoridor::Board::ROWS[0..-2].each do |row|
-          Quoridor::Board::ORIENTATIONS.each do |orientation|
+      ALL_POSSIBLE_FENCE_PLACEMENTS = Quoridor::Game::Board::COLUMNS[0..-2].each_with_object([]) do |column, all|
+        Quoridor::Game::Board::ROWS[0..-2].each do |row|
+          Quoridor::Game::Board::ORIENTATIONS.each do |orientation|
             all << "#{column}#{row}#{orientation}"
           end
         end
@@ -37,7 +37,7 @@ module Quoridor
           placements.reject do |placement|
             future_board = board.deep_clone
             future_board.add_fence(placement)
-            path_finder = Quoridor::PathFinder.new(future_board)
+            path_finder = Quoridor::Game::PathFinder.new(future_board)
 
             future_board.pawns.each_with_index.any? do |pawn, index|
               goal = Quoridor::Rules::Winning.goal(index)

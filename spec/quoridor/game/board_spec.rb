@@ -1,7 +1,7 @@
-require_relative '../../lib/quoridor/board'
-require_relative '../../lib/quoridor/errors'
+require_relative '../../../lib/quoridor/game/board'
+require_relative '../../../lib/quoridor/errors'
 
-RSpec.describe(Quoridor::Board) do
+RSpec.describe(Quoridor::Game::Board) do
   let(:board) { described_class.new }
 
   describe '#add_pawn' do

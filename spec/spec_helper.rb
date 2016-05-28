@@ -2,6 +2,11 @@ require 'simplecov'
 
 SimpleCov.start do
   add_filter '/spec/'
+  track_files 'lib/**/*.rb'
+  add_group 'Lobby', %w(lib/quoridor/lobby lib/quoridor/lobby.rb)
+  add_group 'Game', %w(lib/quoridor/game lib/quoridor/game.rb)
+  add_group 'Rules', %w(lib/quoridor/rules lib/quoridor/rules.rb)
+  add_group 'Errors', %w(lib/quoridor/errors lib/quoridor/errors.rb)
 end
 
 RSpec.configure do |config|

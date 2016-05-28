@@ -1,3 +1,1 @@
-require_relative 'rules/fence_placement'
-require_relative 'rules/movement'
-require_relative 'rules/winning'
+Dir[File.dirname(__FILE__) + '/rules/*.rb'].each {|file| require file }

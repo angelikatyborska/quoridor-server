@@ -1,7 +1,7 @@
 require_relative '../../../lib/quoridor/rules/fence_placement'
 
 RSpec.describe(Quoridor::Rules::FencePlacement) do
-  let(:board) { Quoridor::Board.new }
+  let(:board) { Quoridor::Game::Board.new }
   let(:rules) { described_class }
   let(:all_possible_fences) { %w(
     a9h b9h c9h d9h e9h f9h g9h h9h

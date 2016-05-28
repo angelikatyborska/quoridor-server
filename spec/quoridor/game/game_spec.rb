@@ -1,7 +1,7 @@
-require_relative '../../lib/quoridor/game'
-require_relative '../../lib/quoridor/errors'
+require_relative '../../../lib/quoridor/game/game'
+require_relative '../../../lib/quoridor/errors'
 
-RSpec.describe(Quoridor::Game) do
+RSpec.describe(Quoridor::Game::Game) do
   describe '.new' do
     it 'allows 2 players' do
       expect(described_class.new([nil, nil])).not_to be_nil

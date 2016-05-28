@@ -1,9 +1,1 @@
-require_relative 'errors/invalid_fence'
-require_relative 'errors/invalid_fence_placement'
-require_relative 'errors/invalid_movement'
-require_relative 'errors/invalid_square'
-require_relative 'errors/invalid_pawn'
-require_relative 'errors/invalid_move'
-require_relative 'errors/invalid_number_of_players'
-require_relative 'errors/out_of_turn'
-require_relative 'errors/malformed_message'
+Dir[File.dirname(__FILE__) + '/errors/*.rb'].each {|file| require file }

@@ -1,8 +1,8 @@
-require_relative '../../../lib/quoridor/board'
+require_relative '../../../lib/quoridor/game/board'
 require_relative '../../../lib/quoridor/rules/movement'
 
 RSpec.describe Quoridor::Rules::Movement do
-  let(:board) { Quoridor::Board.new }
+  let(:board) { Quoridor::Game::Board.new }
   let(:rules) { described_class }
 
   describe '#possible_movements' do

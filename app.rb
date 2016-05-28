@@ -1,7 +1,9 @@
 require 'faye/websocket'
 require_relative 'lib/quoridor/lobby'
 
-lobby = Quoridor::Lobby.new
+# TODO: add exception_notification middleware
+
+lobby = Quoridor::Lobby::Lobby.new
 
 App = lambda do |env|
   if Faye::WebSocket.websocket?(env)

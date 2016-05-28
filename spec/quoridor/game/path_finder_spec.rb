@@ -1,8 +1,8 @@
-require_relative '../../lib/quoridor/path_finder'
-require_relative '../../lib/quoridor/board'
+require_relative '../../../lib/quoridor/game/path_finder'
+require_relative '../../../lib/quoridor/game/board'
 
-RSpec.describe(Quoridor::PathFinder) do
-  let(:board) { Quoridor::Board.new }
+RSpec.describe(Quoridor::Game::PathFinder) do
+  let(:board) { Quoridor::Game::Board.new }
   let(:pathfinder) { described_class.new(board) }
   let(:start) { 'e9' }
   let(:targets) { %w(a1 b1 c1 d1 e1 f1 g1 i1) }

@@ -1,8 +1,8 @@
 require_relative '../../../lib/quoridor/rules/winning'
-require_relative '../../../lib/quoridor/board'
+require_relative '../../../lib/quoridor/game/board'
 
 RSpec.describe(Quoridor::Rules::Winning) do
-  let(:board) { Quoridor::Board.new }
+  let(:board) { Quoridor::Game::Board.new }
   let(:rules) { described_class }
 
   describe '#has_won?' do
