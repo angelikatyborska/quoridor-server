@@ -9,6 +9,7 @@ module Quoridor
       ]
 
       ALLOWED_NUMBERS_OF_PLAYERS = [2, 4]
+      FENCE_LIMIT_PER_PLAYERS_NUMBER = {2 => 10, 4 => 5}
     end
   end
 end

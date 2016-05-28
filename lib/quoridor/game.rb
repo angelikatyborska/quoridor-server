@@ -18,7 +18,7 @@ module Quoridor
       @fences_left = []
       @players.length.times do |n|
         @board.add_pawn(Quoridor::Rules::Players::PLAYERS[n][:starting_position])
-        @fences_left << Quoridor::Rules::FencePlacement::LIMIT_PER_PLAYER
+        @fences_left << Quoridor::Rules::Players::FENCE_LIMIT_PER_PLAYERS_NUMBER[@players.length]
       end
     end
 
