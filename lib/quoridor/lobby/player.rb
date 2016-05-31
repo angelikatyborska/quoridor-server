@@ -15,7 +15,7 @@ module Quoridor
         @websocket.send(message)
       end
 
-      def introduce_yourself(nickname)
+      def introduce_self(nickname)
         @nickname = nickname
       end
 
