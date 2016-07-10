@@ -22,17 +22,15 @@ module Quoridor
       end
 
       def players_not_playing
-        @players.reject { |player| @players_ids_to_rooms_ids.include?(player.id) && get_room(player).state.game }
+        @players.reject { |player| @players_ids_to_rooms_ids.include?(player.id) && get_room(player).game }
       end
 
       def request(player, json_message)
         begin
           message = JSON.parse(json_message)
         rescue JSON::ParserError => e
-          MalformedMessage.new(json_message, e.message)
+          fail MalformedMessage.new(json_message, e.message)
         end
-
-        puts message
 
         unless message['type'] && message['data']
           fail MalformedMessage.new(message, 'must contain attributes "type" and "data"')
@@ -44,25 +42,31 @@ module Quoridor
 
         case message['type']
         when 'JOIN', 'LEAVE', 'CREATE_ROOM', 'JOIN_ROOM', 'LEAVE_ROOM'
-          self.send(message['type'].downcase, player, message['data'])
+          return_message = self.send(message['type'].downcase, player, message['data'])
           notify
-        when 'START_GAME', 'MOVE'
           room = get_room(player)
-          room.start_game(player)
+        when 'START_GAME'
+          room = get_room(player)
+          return_message = room.send(message['type'].downcase, player)
+        when 'MOVE'
+          room = get_room(player)
+          return_message = room.send(message['type'].downcase, player, message['data'])
         else
-          # TODO: log something maybe
+          puts "Unknown message type #{message['type']}"
         end
+
+        return_message.to_json
       end
 
       private
 
       def notify
         players_not_playing.each do |player|
-          player.notify(state.to_json)
+          player.notify({type: 'LOBBY_UPDATE', data: state}.to_json)
         end
       end
 
-      def self_state
+      def state
         {
           players_in_lobby: players_in_lobby,
           rooms: @rooms.map(&:state)
@@ -80,14 +84,22 @@ module Quoridor
           fail 'Cannot change nicknames'
         end
 
-        player.introduce_yourself(nickname)
+        player.introduce_self(nickname)
         @players << player
+
+        {type: 'JOINED', data: player}
       end
 
 
-      def leave(player)
-        # TODO: leave room first
+      def leave(player, data)
+        room = get_room(player)
+
+        if room
+          leave_room(player, 'room_id' => room.id)
+        end
+
         @players.delete(player)
+        puts @players
         notify
       end
 

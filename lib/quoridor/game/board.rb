@@ -10,6 +10,9 @@ module Quoridor
 
       attr_reader :fences, :pawns
 
+      # TODO: extract Square and Fence objects!!!
+      # TODO: start using Reek
+
       def initialize
         @fences = []
         @pawns = []

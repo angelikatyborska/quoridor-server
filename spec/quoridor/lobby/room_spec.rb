@@ -1,9 +1,9 @@
-require_relative '../../lib/quoridor/lobby/room'
-require_relative '../../lib/quoridor/lobby/player'
+require_relative '../../../lib/quoridor/lobby/room'
+require_relative '../../../lib/quoridor/lobby/player'
 
 RSpec.describe(Quoridor::Lobby::Room) do
-  let(:owner_ws) { double }
-  let(:other_player_ws) { double }
+  let(:owner_ws) { spy }
+  let(:other_player_ws) { spy }
   let(:owner) { Quoridor::Lobby::Player.new(owner_ws) }
   let(:other_players) { [Quoridor::Lobby::Player.new(other_player_ws), Quoridor::Lobby::Player.new(nil)] }
   let(:room) { described_class.new(owner, 2) }
