@@ -52,10 +52,10 @@ module Quoridor
           room = get_room(player)
           return_message = room.send(message['type'].downcase, player, message['data'])
         else
-          puts "Unknown message type #{message['type']}"
+          fail "Unknown message type #{message['type']}"
         end
 
-        return_message.to_json
+        return_message
       end
 
       private
@@ -68,7 +68,7 @@ module Quoridor
 
       def state
         {
-          players_in_lobby: players_in_lobby,
+          players_in_lobby: players_in_lobby.map(&:to_h),
           rooms: @rooms.map(&:state)
         }
       end
@@ -87,7 +87,7 @@ module Quoridor
         player.introduce_self(nickname)
         @players << player
 
-        {type: 'JOINED', data: player}
+        {type: 'JOINED', data: player.to_h}
       end
 
 
@@ -111,6 +111,8 @@ module Quoridor
         room = Room.new(player, data['capacity'].to_i)
         @rooms << room
         put_player_in_room(player, room)
+
+        {type: 'CREATED_ROOM', data: room.state}
       end
 
       def join_room(player, data)
@@ -119,10 +121,12 @@ module Quoridor
         end
 
         if @players_ids_to_rooms_ids[player.id]
-          fail MalformedMessage.new(data, "player already inside room #{@players_ids_to_rooms_ids[player.id].id}")
+          fail MalformedMessage.new(data, "player already inside room #{@players_ids_to_rooms_ids[player.id]}")
         end
 
         put_player_in_room(player, room)
+
+        {type: 'JOINED_ROOM', data: room.state}
       end
 
       def leave_room(player, data)
@@ -137,6 +141,8 @@ module Quoridor
         room.leave(player)
         @players_ids_to_rooms_ids.delete(player.id)
         @rooms.delete(room) if room.players.length <= 0
+
+        {type: 'LEFT_ROOM', data: room.state}
       end
 
       def put_player_in_room(player, room)

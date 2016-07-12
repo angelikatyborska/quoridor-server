@@ -16,7 +16,7 @@ RSpec.describe(Quoridor::Lobby::Room) do
   describe '#state' do
     it 'returns info about the room' do
       expect(room.state[:players]).to eq([])
-      expect(room.state[:owner]).to eq(owner)
+      expect(room.state[:owner]).to eq(owner.to_h)
       expect(room.state[:capacity]).to eq(2)
       expect(room.state[:spots_left]).to eq(2)
       expect(room.state[:id]).not_to be nil

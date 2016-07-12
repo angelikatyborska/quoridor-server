@@ -8,7 +8,7 @@ RSpec.describe(Quoridor::Lobby::ReceptionDesk) do
   let(:players_in_lobby_ws) { spy }
   let(:players_playing) { [Quoridor::Lobby::Player.new(players_playing_ws), Quoridor::Lobby::Player.new(players_playing_ws)] }
   let(:players_not_playing) { [Quoridor::Lobby::Player.new(players_not_playing_ws)] }
-  let(:players_in_lobby) { [Quoridor::Lobby::Player.new(players_in_lobby_ws)] }
+  let(:players_in_lobby) { [Quoridor::Lobby::Player.new(players_in_lobby_ws), Quoridor::Lobby::Player.new(players_in_lobby_ws)] }
   let(:all_players) { players_playing + players_not_playing + players_in_lobby }
   subject(:reception_desk) { described_class.new }
 
@@ -17,8 +17,19 @@ RSpec.describe(Quoridor::Lobby::ReceptionDesk) do
       reception_desk.request(player, {type: 'JOIN', data: {nickname: "John #{index}"}}.to_json)
     end
 
-    playing_room_id = reception_desk.request(players_playing[0], {type: 'CREATE_ROOM', data: {capacity: 2}}.to_json)
-    not_playing_room_id = reception_desk.request(players_not_playing[0], {type: 'CREATE_ROOM', data: {capacity: 2}}.to_json)
+    create_playing_room_response = reception_desk.request(
+      players_playing[0],
+      {type: 'CREATE_ROOM', data: {capacity: 2}}.to_json
+    )
+
+    playing_room_id = create_playing_room_response[:data][:id]
+
+    create_not_playing_room_response = reception_desk.request(
+      players_not_playing[0],
+      {type: 'CREATE_ROOM', data: {capacity: 2}}.to_json
+    )
+
+    not_playing_room_id = create_not_playing_room_response[:data][:id]
 
     players_playing[1..-1].each_with_index do |player, index|
       reception_desk.request(player, {type: 'JOIN_ROOM', data: {room_id: playing_room_id}}.to_json)
@@ -56,8 +67,11 @@ RSpec.describe(Quoridor::Lobby::ReceptionDesk) do
     describe 'JOIN' do
       it 'responds' do
         request = {type: 'JOIN', data: {nickname: 'John'}}.to_json
-        response = {type: 'JOINED', data: {nickname: 'John'}}
-        expect(reception_desk.request(Quoridor::Lobby::Player.new(spy), request)).to eq(response)
+        actual_response = reception_desk.request(Quoridor::Lobby::Player.new(spy), request)
+
+        expect(actual_response[:type]).to eq('JOINED')
+        expect(actual_response[:data][:nickname]).to eq('John')
+        expect(actual_response[:data][:id]).not_to be_nil
       end
     end
 
@@ -66,15 +80,57 @@ RSpec.describe(Quoridor::Lobby::ReceptionDesk) do
     end
 
     describe 'CREATE_ROOM' do
-      # TODO: implement and add to README
+      it 'responds' do
+        request = {type: 'CREATE_ROOM', data: {capacity: 2}}.to_json
+        actual_response = reception_desk.request(players_in_lobby[0], request)
+
+        expect(actual_response[:type]).to eq('CREATED_ROOM')
+        expect(actual_response[:data][:capacity]).to eq(2)
+        expect(actual_response[:data][:spots_left]).to eq(1)
+        expect(actual_response[:data][:id]).not_to be_nil
+        expect(actual_response[:data][:owner]).to eq(players_in_lobby[0].to_h)
+        expect(actual_response[:data][:players]).to eq([players_in_lobby[0].to_h])
+      end
     end
 
     describe 'JOIN_ROOM' do
-      # TODO: implement and add to README
+      let(:room_id) {
+        create_room_request = {type: 'CREATE_ROOM', data: {capacity: 2}}.to_json
+        create_room_response = reception_desk.request(players_in_lobby[0], create_room_request)
+        create_room_response[:data][:id]
+      }
+
+      it 'responds' do
+        request = {type: 'JOIN_ROOM', data: {room_id: room_id}}.to_json
+        actual_response = reception_desk.request(players_in_lobby[1], request)
+
+        expect(actual_response[:type]).to eq('JOINED_ROOM')
+        expect(actual_response[:data][:capacity]).to eq(2)
+        expect(actual_response[:data][:spots_left]).to eq(0)
+        expect(actual_response[:data][:id]).not_to be_nil
+        expect(actual_response[:data][:owner]).to eq(players_in_lobby[0].to_h)
+        expect(actual_response[:data][:players]).to eq([players_in_lobby[0].to_h, players_in_lobby[1].to_h])
+      end
     end
 
     describe 'LEAVE_ROOM' do
-      # TODO: implement and add to README
+      let(:room_id) {
+        create_room_request = {type: 'CREATE_ROOM', data: {capacity: 2}}.to_json
+        create_room_response = reception_desk.request(players_in_lobby[0], create_room_request)
+        create_room_response[:data][:id]
+      }
+
+      it 'responds' do
+        request = {type: 'LEAVE_ROOM', data: {room_id: room_id}}.to_json
+        actual_response = reception_desk.request(players_in_lobby[0], request)
+
+        expect(actual_response[:type]).to eq('LEFT_ROOM')
+        expect(actual_response[:data][:capacity]).to eq(2)
+        expect(actual_response[:data][:spots_left]).to eq(2)
+        expect(actual_response[:data][:id]).not_to be_nil
+        expect(actual_response[:data][:owner]).to eq(players_in_lobby[0].to_h)
+        expect(actual_response[:data][:players]).to eq([])
+      end
     end
 
     describe 'START_GAME' do

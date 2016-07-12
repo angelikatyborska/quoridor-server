@@ -25,7 +25,7 @@ App = lambda do |env|
       puts [env['REMOTE_ADDR'], :message, event.data]
 
       begin
-        ws.send(lobby.request(player, event.data))
+        ws.send(lobby.request(player, event.data).to_json)
       rescue StandardError => e
         ws.send({type: 'ERROR', data: e.message}.to_json)
       end
@@ -35,7 +35,12 @@ App = lambda do |env|
     ws.on :close do |event|
       EM.cancel_timer(ping_loop)
 
-      lobby.request(player, {type: 'LEAVE', data: {}}.to_json)
+      begin
+        lobby.request(player, {type: 'LEAVE', data: {}}.to_json)
+      rescue Exception => e
+        puts e
+      end
+
       p [env[ 'REMOTE_ADDR'], :close, event.code, event.reason]
       ws = nil
     end

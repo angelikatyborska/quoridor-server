@@ -23,8 +23,8 @@ module Quoridor
         nickname
       end
 
-      def to_json(options = {})
-        { id: id, nickname: nickname }.to_json
+      def to_h
+        { id: id, nickname: nickname }
       end
     end
   end

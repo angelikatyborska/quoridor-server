@@ -28,8 +28,8 @@ module Quoridor
         {
           capacity: capacity,
           spots_left: capacity - players.length,
-          players: players,
-          owner: owner,
+          players: players.map(&:to_h),
+          owner: owner.to_h,
           id: id
         }
       end
@@ -73,7 +73,7 @@ module Quoridor
 
       def notify
         players.each do |player|
-          player.notify(game.state.to_json)
+          player.notify(game.state.to_json) if game
         end
       end
     end
